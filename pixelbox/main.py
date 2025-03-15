@@ -217,44 +217,70 @@ class OverlayWindow(QWidget):
         self.unsetCursor()
 
     def draw_dimension_text(self, painter: QPainter, rect: QRect, text: str):
-        painter.save()
-        font: QFont = painter.font()
-        # Increase font size by 2 points unless the rectangle is small.
-        if rect.width() < 85 or rect.height() < 45:
-            font.setPointSize(12)
-        elif rect.width() < 60 or rect.height() < 30:
-            font.setPointSize(10)
-        else:
-            font.setPointSize(14)
+        """Draws text just above the top-left corner of the rectangle with a correctly positioned yellow background."""
 
-        painter.setFont(font)
-        # Calculate the text's bounding rectangle.
-        metrics: QFontMetrics = painter.fontMetrics()
-        text_rect = metrics.boundingRect(rect, Qt.AlignmentFlag.AlignCenter, text)
-        # Draw yellow background for text.
-        painter.fillRect(text_rect, QColor("yellow"))
+        # Get text size using QFontMetrics
+        font_metrics = QFontMetrics(painter.font())
+        text_width = font_metrics.horizontalAdvance(text)
+        text_height = font_metrics.height()
+
+        # Calculate text position (above top-left of rect)
+        text_x = rect.left()
+        text_y = rect.top() - text_height - 2  # Move text above the rectangle with some padding
+
+        # Ensure background box aligns correctly behind text
+        background_rect = QRect(text_x - 3, text_y, text_width + 6, text_height + 2)  # Add padding
+
+        # Draw the yellow background
+        painter.setBrush(QColor("yellow"))
+        painter.setPen(Qt.PenStyle.NoPen)  # No border for background
+        painter.drawRect(background_rect)
+
+        # Draw the black text on top
         painter.setPen(QColor("black"))
-        painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, text)
-        painter.restore()
+        painter.drawText(text_x, text_y + font_metrics.ascent(), text)
 
-    def paintEvent(self, event: QPaintEvent):
-        painter: QPainter = QPainter(self)
-        pen: QPen = QPen(QColor("yellow"), 2)
-        pen.setStyle(Qt.PenStyle.DashLine)
-        painter.setPen(pen)
         painter.setBrush(Qt.BrushStyle.NoBrush)
 
-        # Draw finalized rectangles.
+    def paintEvent(self, event: QPaintEvent):
+        painter = QPainter(self)
+
+        # First, draw a solid black rectangle for visibility
+        black_pen = QPen(QColor("black"), 2)
+        black_pen.setStyle(Qt.PenStyle.SolidLine)
+
+        # Then, draw a dashed yellow rectangle on top
+        yellow_pen = QPen(QColor("yellow"), 2)
+        yellow_pen.setStyle(Qt.PenStyle.DashLine)
+
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+
+        # Draw finalized rectangles
         for rect in self.rectangles:
+            # Draw black solid outline first
+            painter.setPen(black_pen)
             painter.drawRect(rect)
-            text: str = f"{rect.width()} x {rect.height()}"
+
+            # Draw yellow dashed outline on top
+            painter.setPen(yellow_pen)
+            painter.drawRect(rect)
+
+            text = f"{rect.width()} x {rect.height()}"
             self.draw_dimension_text(painter, rect, text)
 
-        # Draw current rectangle if in progress.
+        # Draw current rectangle if in progress
         if self.drawing and self.start_point and self.current_point:
-            rect: QRect = QRect(self.start_point, self.current_point).normalized()
+            rect = QRect(self.start_point, self.current_point).normalized()
+
+            # Draw black solid outline first
+            painter.setPen(black_pen)
             painter.drawRect(rect)
-            text: str = f"{rect.width()} x {rect.height()}"
+
+            # Draw yellow dashed outline on top
+            painter.setPen(yellow_pen)
+            painter.drawRect(rect)
+
+            text = f"{rect.width()} x {rect.height()}"
             self.draw_dimension_text(painter, rect, text)
 
     def keyPressEvent(self, event: QKeyEvent):
