@@ -1,0 +1,78 @@
+# To install deps from toml
+# -------------------------
+# > pip install .[dev] && pip uninstall .
+# OR
+# > make install
+#
+# To create a new version
+# -------------------------
+# 1. Change the version here
+# 2. do a git commit
+# 3. do a git push
+
+# NOTE: Fix PySide6 xcb plugin error on linux by installing: sudo apt install libxcb-cursor0
+
+[build-system]
+requires = ["setuptools>=46.4.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PixelBox"
+version = "2025.3.15.1"
+description = "PixelBox: Application to measure desktop objects by dragging yellow rectangles that measure width and height in pixels."
+authors = [{ name = "Travis L. Seymour, PhD", email = "nogard@ucsc.edu" }]
+license = { file = "LICENSE" }
+readme = "README.md"
+requires-python = ">=3.9"
+keywords = ["graphics", "ruler", "measurement", "development"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent"
+]
+dependencies = [
+    "pyside6>=6.4.0,<7.0.0",  # Ensures stability across minor versions
+    "QDarkStyle>=3.0.2,<4.0.0"
+]
+
+[project.urls]
+"Bug Tracker" = "https://github.com/travisseymour/pixelbox/issues"
+"Documentation" = "https://github.com/travisseymour/pixelbox#readme"
+
+[project.optional-dependencies]
+dev = [
+    # "pytest",
+    "black",
+    "ruff",
+    "build",
+    "check-manifest",
+]
+
+[project.gui-scripts]
+pixelbox = "pixelbox.main:main"
+PixelBox = "pixelbox.main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pixelbox"]  # Include only the 'pixelbox' package
+namespaces = false
+
+# pull in any files defined in MANIFEST.in use with importlib.resources
+[tool.setuptools]
+include-package-data = true
+
+[tool.black]
+line-length = 120
+
+[tool.ruff]
+line-length = 120
+lint.ignore = [
+#    "F821",  # undefined name
+    "F841",  # Ignore unused variables (e.g., `_` placeholders)
+    "E722"   # Ignore bare except (ensure explicit exceptions in real code)
+]
