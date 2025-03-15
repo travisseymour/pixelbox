@@ -217,21 +217,32 @@ class OverlayWindow(QWidget):
         self.unsetCursor()
 
     def draw_dimension_text(self, painter: QPainter, rect: QRect, text: str):
-        """Draws text just above the top-left corner of the rectangle with a correctly positioned yellow background."""
+        """Draws text above the rectangle unless it's near the top, then places it below with correct spacing."""
 
         # Get text size using QFontMetrics
         font_metrics = QFontMetrics(painter.font())
         text_width = font_metrics.horizontalAdvance(text)
         text_height = font_metrics.height()
 
-        # Calculate text position (above top-left of rect)
         text_x = rect.left()
-        text_y = rect.top() - text_height - 2  # Move text above the rectangle with some padding
+
+        # Adjusted spacing for top/bottom positioning
+        ABOVE_OFFSET = text_height + 6  # Move text up (was 2px, now +2px more)
+        BELOW_OFFSET = text_height - 20  # Move text closer when below
+
+        # Determine text position
+        if rect.top() - ABOVE_OFFSET < 0:  # If too close to the top
+            text_y = rect.bottom() + BELOW_OFFSET  # Draw below, but move it up slightly
+        else:
+            text_y = rect.top() - ABOVE_OFFSET  # Default: Draw above with extra padding
 
         # Ensure background box aligns correctly behind text
         background_rect = QRect(text_x - 3, text_y, text_width + 6, text_height + 2)  # Add padding
 
-        # Draw the yellow background
+        # Save painter state to prevent carryover issues
+        painter.save()
+
+        # Draw the yellow background for text
         painter.setBrush(QColor("yellow"))
         painter.setPen(Qt.PenStyle.NoPen)  # No border for background
         painter.drawRect(background_rect)
@@ -240,7 +251,8 @@ class OverlayWindow(QWidget):
         painter.setPen(QColor("black"))
         painter.drawText(text_x, text_y + font_metrics.ascent(), text)
 
-        painter.setBrush(Qt.BrushStyle.NoBrush)
+        # Restore the painter state
+        painter.restore()
 
     def paintEvent(self, event: QPaintEvent):
         painter = QPainter(self)
