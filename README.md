@@ -5,13 +5,11 @@ Application to measure desktop objects by dragging yellow rectangles that measur
 [![Commit activity](https://img.shields.io/github/commit-activity/m/travisseymour/pixelbox)](https://img.shields.io/github/commit-activity/m/travisseymour/pixelbox)
 [![License](https://img.shields.io/github/license/travisseymour/pixelbox)](https://img.shields.io/github/license/travisseymour/pixelbox)
 
-This tool uses the Textual framework to display a scrollable table of search results from [flatpak](https://flatpak.org/). Use the arrow keys to select an entry and press ENTER to be prompted for installation.
+The PixelBox application makes it easy to measure the extent of rectangular regions on your displays by using your mouse to draw dimension labeled yellow boxes. If you have multiple monitors, you can use the left/right arrow keys to move the drawing areas between monitors. In addition, you can use the number keys 1, 2, 3, 4 to move the PixelBox title window to the upper-left, upper-right, lower-left, and lower-right corners of the display. This is useful to measure areas that the title window obstructs.
 
-- **Github repository**: <https://github.com/travisseymour/pixelbox/>
+Using the righ-click menu, you can clear the last box, all boxes, or save the box drawings to a PNG image on disk.
 
----
-
-![gif of pixelbox usage](images/pixelbox.gif)
+![gif of pixelbox usage](pixelbox/resources/pixelbox.gif)
 
 ---
 
