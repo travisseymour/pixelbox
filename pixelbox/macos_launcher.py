@@ -140,6 +140,6 @@ def remove_macos_app_launcher(app_name: str):
         QMessageBox.information(
             None,
             "Launcher Application Removed Successfully",
-            "The {app_name} launcher application was removed successfully.",
+            f"The {app_name} launcher application was removed successfully.",
             QMessageBox.StandardButton.Ok,
         )
