@@ -36,8 +36,9 @@ classifiers = [
     "Operating System :: OS Independent"
 ]
 dependencies = [
-    "pyside6>=6.4.0,<7.0.0",  # Ensures stability across minor versions
-    "QDarkStyle>=3.0.2,<4.0.0"
+    "pyside6>=6.4.0,<7.0.0",
+    "QDarkStyle>=3.0.2,<4.0.0",
+    "pywin32; sys_platform == 'win32'"
 ]
 
 [project.urls]

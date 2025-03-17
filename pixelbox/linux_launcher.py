@@ -26,7 +26,7 @@ def find_app_icon(app_name: str) -> Path | None:
     if icon_paths:
         return icon_paths[0]  # Return the first match
     else:
-        print(f"⚠️ No icon.png found in {base_path}")
+        print(f"No icon.png found in {base_path}")
         return None
 
 
@@ -66,7 +66,7 @@ Categories=Utility;
     # Refresh application database
     subprocess.run(["update-desktop-database", str(desktop_file.parent)], check=False)
 
-    print(f"✅ '{app_name}' added to Linux application launcher.")
+    print(f"'{app_name}' added to Linux application launcher.")
 
 
 def remove_linux_desktop_entry(app_name: str):
@@ -79,6 +79,6 @@ def remove_linux_desktop_entry(app_name: str):
 
         # Refresh desktop database
         os.system("update-desktop-database ~/.local/share/applications/")
-        print("✅ Desktop database updated.")
+        print("Desktop database updated.")
     else:
-        print(f"⚠️ '{app_name}.desktop' not found, skipping removal.")
+        print(f"'{app_name}.desktop' not found, skipping removal.")

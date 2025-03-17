@@ -22,7 +22,9 @@ import sys
 from typing import Optional, List
 
 from pixelbox.linux_launcher import remove_linux_desktop_entry, linux_desktop_entry_exists, create_linux_desktop_entry
+from pixelbox.macos_launcher import macos_launcher_exists, create_macos_app_launcher, remove_macos_app_launcher
 from pixelbox.resource import get_resource
+from pixelbox.windows_launcher import windows_shortcut_exists, create_windows_shortcut, remove_windows_shortcut
 
 # This has to be set, I think, before importing QApplication
 if sys.platform.startswith("linux"):
@@ -353,8 +355,34 @@ def main():
 
     if cmd == "cleanup":
         if platform.system() == "Linux":
-            remove_linux_desktop_entry("pixelbox")
+            if linux_desktop_entry_exists("pixelbox"):
+                remove_linux_desktop_entry("pixelbox")
             sys.exit()
+
+    # --------------------------
+    # temp for testing on mac vm
+
+    elif cmd == "mac_setup":
+        if not macos_launcher_exists("pixelbox"):
+            create_macos_app_launcher("pixelbox", "PixelBox")
+        sys.exit()
+
+    elif cmd == "mac_cleanup":
+        if macos_launcher_exists("pixelbox"):
+            remove_macos_app_launcher("pixelbox")
+        sys.exit()
+
+    elif cmd == "win_setup":
+        if not windows_shortcut_exists("pixelbox"):
+            create_windows_shortcut("pixelbox", "PixelBox")
+        sys.exit()
+
+    elif cmd == "win_cleanup":
+        if windows_shortcut_exists("pixelbox"):
+            remove_windows_shortcut("pixelbox")
+        sys.exit()
+
+    # ------------------------
 
     app = QApplication(sys.argv)
 
