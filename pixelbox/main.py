@@ -23,8 +23,8 @@ from typing import Optional, List
 
 from pixelbox.linux_launcher import remove_linux_desktop_entry, linux_desktop_entry_exists, create_linux_desktop_entry
 from pixelbox.macos_launcher import macos_launcher_exists, create_macos_app_launcher, remove_macos_app_launcher
-from pixelbox.resource import get_resource
 from pixelbox.windows_launcher import windows_shortcut_exists, create_windows_shortcut, remove_windows_shortcut
+from pixelbox.resource import get_resource
 
 # This has to be set, I think, before importing QApplication
 if sys.platform.startswith("linux"):
@@ -351,6 +351,8 @@ class ToolWindow(QWidget):
 
 
 def main():
+    app = QApplication(sys.argv)
+
     try:
         cmd = sys.argv[1].lower()
     except IndexError:
@@ -387,7 +389,6 @@ def main():
 
     # ------------------------
 
-    app = QApplication(sys.argv)
 
     if platform.system() == "Linux":
         if not linux_desktop_entry_exists("pixelbox"):
