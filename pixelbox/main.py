@@ -390,7 +390,7 @@ def main():
         if not linux_desktop_entry_exists("pixelbox"):
             create_linux_desktop_entry("pixelbox", "PixelBox")
 
-    QApplication.instance().setFont(QFont("Sans-serif", 14))
+    QApplication.instance().setFont(QFont("sans-serif", 14))
     icon = QIcon(get_resource("pixel_box_icon.png"))
     app.setWindowIcon(icon)
 
