@@ -112,7 +112,19 @@ class OverlayWindow(QWidget):
 
     def showEvent(self, event: QShowEvent):
         super().showEvent(event)
-        self.move_to_display(self.display_number)
+        self.tool_window.edit.setHtml(
+            f"""
+            <p style='text-align: center;'>
+              <large><b>PixelBox Ruler<b></large><br>
+              <small>v{__version__}</small><br>
+              <small><b>Travis L. Seymour, PhD</b></small><br>
+              <b>
+              Move This Window: 1, 2, 3, 4
+              </b>
+            </p>
+            """
+        )
+        self.showFullScreen()
 
     def move_tool_window(self, quadrant: int):
         if 1 <= quadrant <= 4:
@@ -125,34 +137,6 @@ class OverlayWindow(QWidget):
                 self.tool_window.move(display.left(), display.bottom())
             elif quadrant == 4:
                 self.tool_window.move(display.right() - self.tool_window.width(), display.bottom())
-
-    def move_to_display(self, delta: int):
-        new_display_number: int = self.display_number + delta
-        if 0 <= new_display_number < len(self.displays):
-            self.display_number = new_display_number
-            display: QRect = self.displays[new_display_number].availableGeometry()
-            self.move_tool_window(self.tool_window_location)
-            self.move(display.left(), display.top())
-            self.raise_()
-            self.clear_all_boxes()
-            if not self.isFullScreen():
-                self.showFullScreen()
-            self.tool_window.edit.setHtml(
-                f"""
-                <p style='text-align: center;'>
-                  <large><b>PixelBox Ruler<b></large><br>
-                  <small>v{__version__}</small><br>
-                  <small>Travis L. Seymour, PhD</small><br>
-                  <b>
-                  Display: {self.display_boxes(self.display_number, len(self.displays))}<br>
-                  Change Display: 🠊, 🠈<br>
-                  Move This Window: 1, 2, 3, 4
-                  </b>
-                </p>
-                """
-            )
-        else:
-            print(f"Cannot move to monitor number {new_display_number}")
 
     def mousePressEvent(self, event: QMouseEvent):
         if event.button() != Qt.MouseButton.LeftButton:
@@ -315,10 +299,6 @@ class OverlayWindow(QWidget):
             self.move_tool_window(3)
         elif event.key() in {Qt.Key.Key_4, Qt.KeyboardModifier.KeypadModifier | Qt.Key_4}:
             self.move_tool_window(4)
-        elif event.key() == Qt.Key.Key_Left:
-            self.move_to_display(-1)
-        elif event.key() == Qt.Key.Key_Right:
-            self.move_to_display(1)
         else:
             super().keyPressEvent(event)
 
@@ -335,7 +315,7 @@ class ToolWindow(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(self.edit)
         self.setLayout(layout)
-        self.setFixedSize(450, 200)
+        self.setFixedSize(450, 150)
         self.overlay_window = OverlayWindow(self)
         QApplication.instance().installEventFilter(self)
         self.show()
@@ -364,37 +344,23 @@ def main():
         if platform.system() == "Linux":
             if linux_desktop_entry_exists("pixelbox"):
                 remove_linux_desktop_entry("pixelbox")
-            sys.exit()
-
-    # --------------------------
-    # temp for testing on mac vm
-
-    elif cmd == "mac_setup":
-        if not macos_launcher_exists("pixelbox"):
-            create_macos_app_launcher("pixelbox", "PixelBox")
+        elif platform.system() == "Darwin":
+            if macos_launcher_exists("pixelbox"):
+                remove_macos_app_launcher("pixelbox")
+        elif platform.system() == "Linux":
+            if windows_shortcut_exists("pixelbox"):
+                remove_windows_shortcut("pixelbox")
         sys.exit()
-
-    elif cmd == "mac_cleanup":
-        if macos_launcher_exists("pixelbox"):
-            remove_macos_app_launcher("pixelbox")
-        sys.exit()
-
-    elif cmd == "win_setup":
-        if not windows_shortcut_exists("pixelbox"):
-            create_windows_shortcut("pixelbox", "PixelBox")
-        sys.exit()
-
-    elif cmd == "win_cleanup":
-        if windows_shortcut_exists("pixelbox"):
-            remove_windows_shortcut("pixelbox")
-        sys.exit()
-
-    # ------------------------
-
 
     if platform.system() == "Linux":
         if not linux_desktop_entry_exists("pixelbox"):
             create_linux_desktop_entry("pixelbox", "PixelBox")
+    elif platform.system() == "Darwin":
+        if not macos_launcher_exists("pixelbox"):
+            create_macos_app_launcher("pixelbox", "PixelBox")
+    elif platform.system() == "Windows":
+        if not linux_desktop_entry_exists("pixelbox"):
+            create_windows_shortcut("pixelbox", "PixelBox")
 
     QApplication.instance().setFont(QFont("sans-serif", 14))
     icon = QIcon(get_resource("pixel_box_icon.png"))

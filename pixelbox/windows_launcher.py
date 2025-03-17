@@ -27,18 +27,18 @@ def find_app_icon(app_name: str) -> Optional[Path]:
     Unlike on other OSs, the windows path to our icon is determined.
     Thus, we can return it if it exists, otherwise fail
     """
-    icon_path =  Path(
+    icon_path = Path(
         Path.home(),
-        'AppData',
-        'Roaming',
-        'uv',
-        'tools',
+        "AppData",
+        "Roaming",
+        "uv",
+        "tools",
         app_name,
-        'Lib',
-        'site-packages',
+        "Lib",
+        "site-packages",
         app_name,
-        'resources',
-        'icon.ico'
+        "resources",
+        "icon.ico",
     )
 
     if icon_path.is_file():
