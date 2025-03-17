@@ -17,9 +17,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import os
+import platform
 import sys
 from typing import Optional, List
 
+from pixelbox.linux_launcher import remove_linux_desktop_entry, linux_desktop_entry_exists, create_linux_desktop_entry
 from pixelbox.resource import get_resource
 
 # This has to be set, I think, before importing QApplication
@@ -51,6 +53,7 @@ from PySide6.QtGui import (
     QShowEvent,
     QAction,
     QFontMetrics,
+    QIcon,
 )
 from PySide6.QtCore import Qt, QRect, QEvent, QPoint
 
@@ -131,9 +134,10 @@ class OverlayWindow(QWidget):
             self.tool_window.edit.setHtml(
                 f"""
                 <p style='text-align: center;'>
-                  <h3>PixelBox Ruler v1.0<br>{self.display_boxes(self.display_number, len(self.displays))}</h3>
+                  <h3>PixelBox Ruler v1.0</h3>
+                  <small>Travis L. Seymour, PhD</small>
                   <h4>
-                  Display: {self.display_number + 1}/{len(self.displays)}<br>
+                  Display: {self.display_boxes(self.display_number, len(self.displays))}<br>
                   Change Display: 🠊, 🠈<br>
                   Move This Window: 1, 2, 3, 4
                   </h4>
@@ -227,14 +231,14 @@ class OverlayWindow(QWidget):
         text_x = rect.left()
 
         # Adjusted spacing for top/bottom positioning
-        ABOVE_OFFSET = text_height + 6  # Move text up (was 2px, now +2px more)
-        BELOW_OFFSET = text_height - 20  # Move text closer when below
+        above_offset = text_height + 6  # Move text up (was 2px, now +2px more)
+        below_offset = text_height - 20  # Move text closer when below
 
         # Determine text position
-        if rect.top() - ABOVE_OFFSET < 0:  # If too close to the top
-            text_y = rect.bottom() + BELOW_OFFSET  # Draw below, but move it up slightly
+        if rect.top() - above_offset < 0:  # If too close to the top
+            text_y = rect.bottom() + below_offset  # Draw below, but move it up slightly
         else:
-            text_y = rect.top() - ABOVE_OFFSET  # Default: Draw above with extra padding
+            text_y = rect.top() - above_offset  # Default: Draw above with extra padding
 
         # Ensure background box aligns correctly behind text
         background_rect = QRect(text_x - 3, text_y, text_width + 6, text_height + 2)  # Add padding
@@ -324,7 +328,7 @@ class ToolWindow(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(self.edit)
         self.setLayout(layout)
-        self.setFixedSize(450, 190)
+        self.setFixedSize(450, 200)
         self.overlay_window = OverlayWindow(self)
         QApplication.instance().installEventFilter(self)
         self.show()
@@ -342,12 +346,29 @@ class ToolWindow(QWidget):
 
 
 def main():
+    try:
+        cmd = sys.argv[1].lower()
+    except IndexError:
+        cmd = ""
+
+    if cmd == "cleanup":
+        if platform.system() == "Linux":
+            remove_linux_desktop_entry("pixelbox")
+            sys.exit()
+
     app = QApplication(sys.argv)
-    # print(QGuiApplication.platformName())  # Should print 'wayland' or 'xcb'
+
+    if platform.system() == "Linux":
+        if not linux_desktop_entry_exists("pixelbox"):
+            create_linux_desktop_entry("pixelbox", "PixelBox")
 
     QApplication.instance().setFont(QFont("Sans-serif", 14))
+    icon = QIcon(get_resource("pixel_box_icon.png"))
+    app.setWindowIcon(icon)
 
-    _ = ToolWindow()
+    window = ToolWindow()
+    window.setWindowIcon(icon)
+
     sys.exit(app.exec())
 
 
