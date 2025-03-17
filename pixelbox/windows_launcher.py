@@ -23,15 +23,27 @@ def get_app_path(app_name: str) -> str:
 
 
 def find_app_icon(app_name: str) -> Optional[Path]:
-    """Finds the icon file for a uv-installed app (expects icon.ico)."""
-    base_path = Path.home() / ".local/share/uv/tools" / app_name
-    # Recursively search for icon.ico inside base_path
-    icon_paths = list(base_path.rglob("icon.ico"))
+    """
+    Unlike on other OSs, the windows path to our icon is determined.
+    Thus, we can return it if it exists, otherwise fail
+    """
+    icon_path =  Path(
+        Path.home(),
+        'AppData',
+        'Roaming',
+        'uv',
+        'tools',
+        app_name,
+        'Lib',
+        'site-packages',
+        app_name,
+        'resources',
+        'icon.ico'
+    )
 
-    if icon_paths:
-        return icon_paths[0]  # Return the first match
+    if icon_path.is_file():
+        return icon_path
     else:
-        print(f"No icon.ico found in {base_path}")
         return None
 
 
