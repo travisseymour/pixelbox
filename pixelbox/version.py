@@ -30,7 +30,7 @@ def get_version_from_pyproject():
 
 try:
     # Try to get version from installed package
-    __version__ = version("EPICcoder")
+    __version__ = version("pixelbox")
 except:
     # Fallback: Read version from pyproject.toml during development
     __version__ = get_version_from_pyproject()
