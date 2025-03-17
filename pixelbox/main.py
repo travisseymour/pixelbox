@@ -352,6 +352,14 @@ def main():
                 remove_windows_shortcut("pixelbox")
         sys.exit()
 
+    if platform.system() != "Linux":
+        QMessageBox.information(
+            None,
+            "Unsupported Operating System",
+            "PixelBox is not currently supported on your operating system.",
+            QMessageBox.StandardButton.Ok,
+        )
+
     if platform.system() == "Linux":
         if not linux_desktop_entry_exists("pixelbox"):
             create_linux_desktop_entry("pixelbox", "PixelBox")
