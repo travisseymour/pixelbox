@@ -17,9 +17,7 @@ def get_app_path(app_name: str) -> str:
     """Finds the installed application path using shutil.which()."""
     app_path = shutil.which(app_name)
     if not app_path:
-        print(
-            f"Post-Install Error: '{app_name}' not found. The command 'uv tool install {app_name}' may have failed."
-        )
+        print(f"Post-Install Error: '{app_name}' not found. The command 'uv tool install {app_name}' may have failed.")
         sys.exit(1)
     return app_path
 

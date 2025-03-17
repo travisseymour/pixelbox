@@ -30,6 +30,9 @@ from pixelbox.windows_launcher import windows_shortcut_exists, create_windows_sh
 if sys.platform.startswith("linux"):
     os.environ["QT_QPA_PLATFORM"] = "xcb"
 
+os.environ["QT_LOGGING_RULES"] = "qt.qpa.fonts=false"
+
+
 from PySide6.QtWidgets import (
     QApplication,
     QWidget,
