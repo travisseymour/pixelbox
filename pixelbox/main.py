@@ -25,6 +25,7 @@ from pixelbox.linux_launcher import remove_linux_desktop_entry, linux_desktop_en
 from pixelbox.macos_launcher import macos_launcher_exists, create_macos_app_launcher, remove_macos_app_launcher
 from pixelbox.windows_launcher import windows_shortcut_exists, create_windows_shortcut, remove_windows_shortcut
 from pixelbox.resource import get_resource
+from pixelbox.version import __version__
 
 # This has to be set, I think, before importing QApplication
 if sys.platform.startswith("linux"):
@@ -139,13 +140,14 @@ class OverlayWindow(QWidget):
             self.tool_window.edit.setHtml(
                 f"""
                 <p style='text-align: center;'>
-                  <h3>PixelBox Ruler v1.0</h3>
-                  <small>Travis L. Seymour, PhD</small>
-                  <h4>
+                  <large><b>PixelBox Ruler<b></large><br>
+                  <small>v{__version__}</small><br>
+                  <small>Travis L. Seymour, PhD</small><br>
+                  <b>
                   Display: {self.display_boxes(self.display_number, len(self.displays))}<br>
                   Change Display: 🠊, 🠈<br>
                   Move This Window: 1, 2, 3, 4
-                  </h4>
+                  </b>
                 </p>
                 """
             )
