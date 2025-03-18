@@ -102,6 +102,7 @@ class OverlayWindow(QWidget):
         self.current_point: Optional[QPoint] = None
         self.displays: List[QScreen] = QScreen.virtualSiblings(self.screen())
         self.display_number: int = 0
+        self.device_pixel_ratio = 1.0
 
         self.setMouseTracking(True)  # For mouseMoveEvents even when no buttons are pressed.
         self.show()
@@ -124,6 +125,17 @@ class OverlayWindow(QWidget):
             </p>
             """
         )
+        screen = QGuiApplication.screenAt(QCursor.pos())
+        if screen:
+            self.device_pixel_ratio = screen.devicePixelRatio()
+            if not self.device_pixel_ratio:
+                print(
+                    "WARNING: In PixelBox, the command screen.devicePixelRatio() returned 0. "
+                    "Something unexpected is going on, and your box sizes are unlikely to be accurate.  "
+                    "Forcing the pixel ration to 1.0."
+                )
+                self.device_pixel_ratio = 1.0
+
         self.showFullScreen()
 
     def move_tool_window(self, quadrant: int):
@@ -272,7 +284,7 @@ class OverlayWindow(QWidget):
             painter.setPen(yellow_pen)
             painter.drawRect(rect)
 
-            text = f"{rect.width()} x {rect.height()}"
+            text = f"{int(rect.width() * self.device_pixel_ratio)} x {int(rect.height() * self.device_pixel_ratio)}"
             self.draw_dimension_text(painter, rect, text)
 
         # Draw current rectangle if in progress
@@ -287,7 +299,7 @@ class OverlayWindow(QWidget):
             painter.setPen(yellow_pen)
             painter.drawRect(rect)
 
-            text = f"{rect.width()} x {rect.height()}"
+            text = f"{int(rect.width() * self.device_pixel_ratio)} x {int(rect.height() * self.device_pixel_ratio)}"
             self.draw_dimension_text(painter, rect, text)
 
     def keyPressEvent(self, event: QKeyEvent):
